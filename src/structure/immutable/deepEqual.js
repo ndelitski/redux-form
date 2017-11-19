@@ -12,6 +12,15 @@ const customizer = (obj: any, other: any) => {
   }
 
   if (Iterable.isIterable(obj) && Iterable.isIterable(other)) {
+    // Draftjs hack - we should compare only content state, selection state should not matter on `dirty` flag
+    if (obj.has('currentContent') && other.has('currentContent')) {
+      return isEqualWith(
+        obj.get('currentContent'),
+        other.get('currentContent'),
+        customizer
+      )
+    }
+
     return (
       obj.count() === other.count() &&
       obj.every((value, key) => {
